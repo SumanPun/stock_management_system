@@ -14,11 +14,12 @@ namespace api.Mappers
                 Title = comment.Title,
                 Content = comment.Content,
                 CreatedOn = comment.CreatedOn,
+                CreatedBy = comment.AppUser.UserName,
                 StockId = comment.StockId
             };
         }
 
-        public static Comment FromCreateRequestToComment(this CreateCommentRequest commentDto, CreateCommentRequest request, int stockId)
+        public static Comment FromCreateRequestToComment(this CreateCommentRequest commentDto, int stockId)
         {
             return new Comment
             {

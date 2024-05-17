@@ -11,20 +11,15 @@ namespace api.Repository
     {
 
         private readonly ApplicationDbContext _context;
-        private readonly IStockRepository _stockRepo;
-
+        private readonly IStockRepository _stockRepo; 
         public CommentRepository(ApplicationDbContext context, IStockRepository stockRepo)
         {
             _context = context;
             _stockRepo = stockRepo;
         }
 
-        public async Task<Comment?> CreateAsync(int stockId, Comment comment)
+        public async Task<Comment?> CreateAsync(Comment comment)
         {
-            if (!await _stockRepo.IsStockExit(stockId))
-            {
-                return null;
-            }
             comment.CreatedOn = DateTime.Now;
             await _context.Comments.AddAsync(comment);
             await _context.SaveChangesAsync();
@@ -45,12 +40,12 @@ namespace api.Repository
 
         public async Task<List<Comment>> GetAllAsync()
         {
-            return await _context.Comments.ToListAsync();
+            return await _context.Comments.Include(x=>x.AppUser).ToListAsync();
         }
 
         public async Task<Comment?> GetByIdAsync(int id)
         {
-            var comment = await _context.Comments.FirstOrDefaultAsync(x => x.Id == id);
+            var comment = await _context.Comments.Include(x=>x.AppUser).FirstOrDefaultAsync(x => x.Id == id);
             if (comment == null)
             {
                 return null;
